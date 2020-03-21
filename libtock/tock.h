@@ -30,6 +30,8 @@ int allow(uint32_t driver, uint32_t allow, void* ptr, size_t size);
 // 1: sbrk, arg1 is increment to increase/decrease memory break
 void* memop(uint32_t op_type, int arg1);
 
+int deadline(uint32_t time);
+
 // Wrappers around memop to support app introspection
 void* tock_app_memory_begins_at(void);
 void* tock_app_memory_ends_at(void);

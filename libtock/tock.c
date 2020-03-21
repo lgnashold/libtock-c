@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include "tock.h"
 
 typedef struct {
@@ -138,6 +137,18 @@ void* memop(uint32_t op_type, int arg1) {
   return ret;
 }
 
+int deadline(uint32_t time) {
+  register uint32_t r0 asm ("r0") = time;
+  register int   ret asm ("r0");
+  asm volatile (
+    "svc 5"
+    : "=r" (ret)
+    : "r" (r0)
+    : "memory"
+    );
+  return ret;
+}
+
 #elif defined(__riscv)
 
 // Implementation of the syscalls for generic RISC-V platforms.
@@ -224,6 +235,17 @@ void* memop(uint32_t op_type, int arg1) {
   return ret;
 }
 
+int deadline(uint32_t time) {
+  register uint32_t a2  asm ("a1") = time;
+  register int ret asm ("a0");
+  asm volatile (
+    "li    a0, 5\n"
+    "ecall\n"
+    : "=r" (ret)
+    : "r" (a1)
+    : "memory");
+  return ret;
+}
 #endif
 
 void* tock_app_memory_begins_at(void) {
